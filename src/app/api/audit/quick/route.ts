@@ -1,23 +1,10 @@
 import { NextResponse } from "next/server";
 import { crawlSite } from "@/lib/crawler";
 import { gateResultsByTier } from "@/lib/tier-gate";
+import { saveAudit, getAudit, type AuditRecord } from "@/lib/db/audit-store";
 
-// In-memory store for MVP (replace with Supabase in production)
-const auditStore = new Map<
-  string,
-  {
-    id: string;
-    url: string;
-    email: string;
-    status: string;
-    tier: string;
-    result: any;
-    createdAt: string;
-  }
->();
-
-// Export the store so the status/result routes can access it
-export { auditStore };
+// Re-export for legacy compatibility (old code imported `auditStore`)
+export { getAudit, saveAudit };
 
 export async function POST(request: Request) {
   try {
@@ -26,10 +13,7 @@ export async function POST(request: Request) {
 
     // Validate inputs
     if (!url || typeof url !== "string") {
-      return NextResponse.json(
-        { error: "URL is required" },
-        { status: 400 }
-      );
+      return NextResponse.json({ error: "URL is required" }, { status: 400 });
     }
 
     if (!email || typeof email !== "string" || !email.includes("@")) {
@@ -48,7 +32,6 @@ export async function POST(request: Request) {
       normalizedUrl = `https://${normalizedUrl}`;
     }
 
-    // Validate URL format
     try {
       new URL(normalizedUrl);
     } catch {
@@ -58,33 +41,31 @@ export async function POST(request: Request) {
       );
     }
 
-    // Generate audit ID
     const auditId = crypto.randomUUID();
+    const createdAt = new Date().toISOString();
 
-    // Store initial audit record
-    auditStore.set(auditId, {
+    // Save initial "crawling" record
+    await saveAudit({
       id: auditId,
       url: normalizedUrl,
       email,
       status: "crawling",
       tier: "basic",
       result: null,
-      createdAt: new Date().toISOString(),
+      createdAt,
     });
 
-    // Run crawl (for MVP, synchronous; later move to BullMQ)
+    // Run crawl synchronously (will move to BullMQ for paid tiers)
     try {
       const crawlResult = await crawlSite({
         url: normalizedUrl,
-        tier: "pro", // Crawl everything, gate at response level
+        tier: "pro", // Always crawl deep, gate at response level
         maxPages: 1,
       });
 
-      // Gate results for free tier
       const gated = gateResultsByTier(crawlResult.issues, "basic");
 
-      // Update store with results
-      auditStore.set(auditId, {
+      const finalRecord: AuditRecord = {
         id: auditId,
         url: normalizedUrl,
         email,
@@ -105,24 +86,33 @@ export async function POST(request: Request) {
             title: p.title,
             wordCount: p.wordCount,
           })),
+          // Note: we store unfiltered issues internally for upgrade-to-paid reveal
+          _allIssues: crawlResult.issues,
         },
-        createdAt: new Date().toISOString(),
-      });
+        createdAt,
+      };
+
+      await saveAudit(finalRecord);
     } catch (crawlError) {
-      auditStore.set(auditId, {
+      console.error("Crawl error:", crawlError);
+      await saveAudit({
         id: auditId,
         url: normalizedUrl,
         email,
         status: "failed",
         tier: "basic",
-        result: { error: "Failed to crawl site. It may be unreachable or blocking our requests." },
-        createdAt: new Date().toISOString(),
+        result: {
+          error:
+            "Failed to crawl site. It may be unreachable or blocking our requests.",
+        },
+        createdAt,
       });
     }
 
+    const final = await getAudit(auditId);
     return NextResponse.json({
       auditId,
-      status: auditStore.get(auditId)?.status,
+      status: final?.status || "complete",
     });
   } catch (error) {
     console.error("Audit quick route error:", error);
