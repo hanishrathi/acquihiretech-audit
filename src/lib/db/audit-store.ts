@@ -39,15 +39,25 @@ export interface AuditRecord {
 
 // ─── API ────────────────────────────────────────────────────────────────────
 
+// Track last error for debug visibility
+let lastSupabaseError: string | null = null;
+
+export function getLastSupabaseError(): string | null {
+  return lastSupabaseError;
+}
+
 export async function saveAudit(record: AuditRecord): Promise<void> {
   // Always update memory store (for fast same-request reads)
   memoryStore.set(record.id, record);
 
-  if (!supabaseClient) return;
+  if (!supabaseClient) {
+    lastSupabaseError = "Supabase client not initialized — env vars missing";
+    return;
+  }
 
   try {
     // Upsert audit run (project_id null for anonymous free-tier audits)
-    await supabaseClient.from("audit_runs").upsert(
+    const { error: runError } = await supabaseClient.from("audit_runs").upsert(
       {
         id: record.id,
         project_id: null,
@@ -68,6 +78,13 @@ export async function saveAudit(record: AuditRecord): Promise<void> {
       },
       { onConflict: "id", ignoreDuplicates: false }
     );
+
+    if (runError) {
+      lastSupabaseError = `[audit_runs upsert] ${runError.message} (code: ${runError.code})`;
+      console.error("[supabase] audit_runs upsert error:", runError);
+    } else {
+      lastSupabaseError = null;
+    }
 
     // Save individual issues for full report retrieval (Pro feature foundation)
     if (record.status === "complete" && record.result?.issues?.length) {
@@ -104,8 +121,8 @@ export async function saveAudit(record: AuditRecord): Promise<void> {
         { onConflict: "email", ignoreDuplicates: true }
       );
     }
-  } catch (error) {
-    // Log but don't fail — memory store is still working
+  } catch (error: any) {
+    lastSupabaseError = `[saveAudit exception] ${error.message}`;
     console.error("[supabase] saveAudit error:", error);
   }
 }
