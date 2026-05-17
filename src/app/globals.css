@@ -1,26 +1,135 @@
 @import "tailwindcss";
 
 :root {
-  --background: #ffffff;
-  --foreground: #171717;
+  /* AcquiHire Design System — ported from main site */
+  --text: #1d1d1f;
+  --text-secondary: #86868b;
+  --text-dim: #6e6e73;
+  --text-on-dark: #f5f5f7;
+  --text-on-dark-muted: #a1a1a6;
+
+  --bg: #ffffff;
+  --bg-tint: #f5f5f7;
+  --bg-near-white: #fbfbfd;
+  --bg-dark: #000000;
+
+  --link: #0066cc;
+  --link-hover: #0077ed;
+  --accent: #1d1d1f;
+
+  --border: #d2d2d7;
+  --border-light: #e8e8ed;
+  --divider: rgba(0, 0, 0, 0.08);
+
+  /* Engine colors */
+  --engine-growth: #f97316;
+  --engine-conversion: #3b82f6;
+  --engine-operations: #10b981;
+  --engine-presence: #a855f7;
+
+  /* Audit score colors */
+  --score-excellent: #10b981;
+  --score-good: #f97316;
+  --score-poor: #ef4444;
+  --score-critical: #991b1b;
+
+  /* Shape tokens */
+  --r-tile: 18px;
+  --r-card: 18px;
+  --r-pill: 980px;
+  --r-input: 12px;
+
+  /* Container */
+  --container: 980px;
+  --container-wide: 1440px;
+
+  --background: var(--bg);
+  --foreground: var(--text);
 }
 
 @theme inline {
   --color-background: var(--background);
   --color-foreground: var(--foreground);
-  --font-sans: var(--font-geist-sans);
-  --font-mono: var(--font-geist-mono);
-}
-
-@media (prefers-color-scheme: dark) {
-  :root {
-    --background: #0a0a0a;
-    --foreground: #ededed;
-  }
+  --color-text: var(--text);
+  --color-text-secondary: var(--text-secondary);
+  --color-text-dim: var(--text-dim);
+  --color-bg-tint: var(--bg-tint);
+  --color-bg-dark: var(--bg-dark);
+  --color-link: var(--link);
+  --color-link-hover: var(--link-hover);
+  --color-border: var(--border);
+  --color-border-light: var(--border-light);
+  --color-engine-growth: var(--engine-growth);
+  --color-engine-conversion: var(--engine-conversion);
+  --color-engine-operations: var(--engine-operations);
+  --color-engine-presence: var(--engine-presence);
+  --color-score-excellent: var(--score-excellent);
+  --color-score-good: var(--score-good);
+  --color-score-poor: var(--score-poor);
+  --color-score-critical: var(--score-critical);
+  --font-display: "Syne", -apple-system, BlinkMacSystemFont, "Segoe UI", "Helvetica Neue", sans-serif;
+  --font-body: "DM Sans", -apple-system, BlinkMacSystemFont, "Segoe UI", "Helvetica Neue", sans-serif;
+  --font-mono: "JetBrains Mono", "SF Mono", "Fira Code", "Courier New", monospace;
 }
 
 body {
   background: var(--background);
   color: var(--foreground);
-  font-family: Arial, Helvetica, sans-serif;
+  font-family: var(--font-body);
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+  text-rendering: optimizeLegibility;
+}
+
+/* Score gauge animations */
+@keyframes score-fill {
+  from { stroke-dashoffset: 283; }
+}
+
+@keyframes fade-up {
+  from {
+    opacity: 0;
+    transform: translateY(20px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+@keyframes pulse-glow {
+  0%, 100% { box-shadow: 0 0 0 0 rgba(16, 185, 129, 0.4); }
+  50% { box-shadow: 0 0 20px 10px rgba(16, 185, 129, 0.1); }
+}
+
+.animate-fade-up {
+  animation: fade-up 0.6s ease-out forwards;
+}
+
+.animate-score-fill {
+  animation: score-fill 1.5s ease-out forwards;
+}
+
+.animate-pulse-glow {
+  animation: pulse-glow 2s ease-in-out infinite;
+}
+
+/* Blur overlay for gated content */
+.tier-gate-blur {
+  filter: blur(6px);
+  pointer-events: none;
+  user-select: none;
+}
+
+/* Progress bar for crawl */
+.crawl-progress-bar {
+  background: linear-gradient(90deg, var(--engine-growth), var(--engine-conversion), var(--engine-operations), var(--engine-presence));
+  background-size: 300% 100%;
+  animation: gradient-shift 3s ease infinite;
+}
+
+@keyframes gradient-shift {
+  0% { background-position: 0% 50%; }
+  50% { background-position: 100% 50%; }
+  100% { background-position: 0% 50%; }
 }
