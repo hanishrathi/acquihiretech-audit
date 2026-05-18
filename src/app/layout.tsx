@@ -1,5 +1,6 @@
 import type { Metadata } from "next";
 import { Syne, DM_Sans, JetBrains_Mono } from "next/font/google";
+import { ClerkProvider } from "@clerk/nextjs";
 import "./globals.css";
 
 const syne = Syne({
@@ -68,17 +69,28 @@ export default function RootLayout({
   children: React.ReactNode;
 }>) {
   return (
-    <html
-      lang="en"
-      className={`${syne.variable} ${dmSans.variable} ${jetbrainsMono.variable} h-full antialiased`}
+    <ClerkProvider
+      appearance={{
+        variables: {
+          colorPrimary: "#1d1d1f",
+          colorBackground: "#ffffff",
+          fontFamily: "DM Sans, -apple-system, sans-serif",
+          borderRadius: "12px",
+        },
+      }}
     >
-      <head>
-        <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
-        <link rel="canonical" href="https://audit.acquihiretech.com" />
-      </head>
-      <body className="min-h-full flex flex-col bg-background text-foreground font-body">
-        {children}
-      </body>
-    </html>
+      <html
+        lang="en"
+        className={`${syne.variable} ${dmSans.variable} ${jetbrainsMono.variable} h-full antialiased`}
+      >
+        <head>
+          <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
+          <link rel="canonical" href="https://audit.acquihiretech.com" />
+        </head>
+        <body className="min-h-full flex flex-col bg-background text-foreground font-body">
+          {children}
+        </body>
+      </html>
+    </ClerkProvider>
   );
 }

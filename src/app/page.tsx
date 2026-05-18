@@ -82,7 +82,8 @@ export default function HomePage() {
           </a>
           <div className="flex items-center gap-6">
             <a href="/pricing" className="text-sm text-text-secondary hover:text-text transition-colors">Pricing</a>
-            <a href="/dashboard" className="text-sm px-4 py-1.5 bg-bg-dark text-white rounded-full hover:bg-black transition-colors">Sign In</a>
+            <a href="/sign-in" className="text-sm text-text-secondary hover:text-text transition-colors">Sign In</a>
+            <a href="/sign-up" className="text-sm px-4 py-1.5 bg-bg-dark text-white rounded-full hover:bg-black transition-colors">Sign Up</a>
           </div>
         </div>
       </nav>
