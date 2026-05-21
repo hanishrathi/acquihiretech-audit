@@ -62,11 +62,27 @@ export async function GET() {
         process.env.CLERK_WEBHOOK_SECRET
       ),
       // Payments — Razorpay (India)
-      razorpay: maskStatus(
-        process.env.RAZORPAY_KEY_ID,
-        process.env.RAZORPAY_KEY_SECRET,
-        process.env.RAZORPAY_WEBHOOK_SECRET
-      ),
+      razorpay: {
+        ...maskStatus(
+          process.env.RAZORPAY_KEY_ID,
+          process.env.RAZORPAY_KEY_SECRET,
+          process.env.RAZORPAY_WEBHOOK_SECRET
+        ),
+        // Key ID prefix is public (browser sees it at checkout) — safe to show
+        keyIdMode: process.env.RAZORPAY_KEY_ID
+          ? process.env.RAZORPAY_KEY_ID.startsWith("rzp_live")
+            ? "LIVE"
+            : process.env.RAZORPAY_KEY_ID.startsWith("rzp_test")
+              ? "TEST"
+              : "UNKNOWN PREFIX"
+          : "missing",
+        keyIdPrefix: process.env.RAZORPAY_KEY_ID
+          ? process.env.RAZORPAY_KEY_ID.slice(0, 12)
+          : "missing",
+        secretLength: process.env.RAZORPAY_KEY_SECRET
+          ? process.env.RAZORPAY_KEY_SECRET.length
+          : 0,
+      },
       // Payments — Stripe (international)
       stripe: maskStatus(
         process.env.STRIPE_SECRET_KEY,
@@ -81,6 +97,38 @@ export async function GET() {
       resend: process.env.RESEND_API_KEY ? "✅ configured" : "❌ missing",
     },
   };
+
+  // ── Live Razorpay order-creation test ──────────────────────────────────────
+  // Creating an order is free and harmless (it's not a charge). This surfaces
+  // the REAL Razorpay error if keys are bad / account misconfigured.
+  if (process.env.RAZORPAY_KEY_ID && process.env.RAZORPAY_KEY_SECRET) {
+    try {
+      const Razorpay = (await import("razorpay")).default;
+      const rzp = new Razorpay({
+        key_id: process.env.RAZORPAY_KEY_ID,
+        key_secret: process.env.RAZORPAY_KEY_SECRET,
+      });
+      const testOrder = await rzp.orders.create({
+        amount: 100, // ₹1 — minimum; order != charge
+        currency: "INR",
+        receipt: `debug-${Date.now()}`,
+      });
+      report.razorpayOrderTest = {
+        status: "✅ order created successfully",
+        orderId: testOrder.id,
+        note: "Keys are valid and the account can create orders.",
+      };
+    } catch (err: any) {
+      report.razorpayOrderTest = {
+        status: "❌ order creation FAILED",
+        error: err?.error?.description || err?.message || String(err),
+        statusCode: err?.statusCode,
+        rawError: err?.error || null,
+      };
+    }
+  } else {
+    report.razorpayOrderTest = { status: "skipped — Razorpay keys missing" };
+  }
 
   if (!url || !serviceKey) {
     report.supabaseChecks.clientCreated = "❌ skipped — env vars missing";
