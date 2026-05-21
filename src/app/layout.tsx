@@ -63,11 +63,34 @@ export const metadata: Metadata = {
   },
 };
 
+// Clerk is wrapped only when configured — otherwise the free audit tool
+// renders without it, so a missing key can't crash page rendering.
+const clerkConfigured = Boolean(process.env.NEXT_PUBLIC_CLERK_PUBLISHABLE_KEY);
+
 export default function RootLayout({
   children,
 }: Readonly<{
   children: React.ReactNode;
 }>) {
+  const shell = (
+    <html
+      lang="en"
+      className={`${syne.variable} ${dmSans.variable} ${jetbrainsMono.variable} h-full antialiased`}
+    >
+      <head>
+        <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
+        <link rel="canonical" href="https://audit.acquihiretech.com" />
+      </head>
+      <body className="min-h-full flex flex-col bg-background text-foreground font-body">
+        {children}
+      </body>
+    </html>
+  );
+
+  if (!clerkConfigured) {
+    return shell;
+  }
+
   return (
     <ClerkProvider
       appearance={{
@@ -79,18 +102,7 @@ export default function RootLayout({
         },
       }}
     >
-      <html
-        lang="en"
-        className={`${syne.variable} ${dmSans.variable} ${jetbrainsMono.variable} h-full antialiased`}
-      >
-        <head>
-          <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
-          <link rel="canonical" href="https://audit.acquihiretech.com" />
-        </head>
-        <body className="min-h-full flex flex-col bg-background text-foreground font-body">
-          {children}
-        </body>
-      </html>
+      {shell}
     </ClerkProvider>
   );
 }

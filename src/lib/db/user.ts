@@ -1,5 +1,5 @@
 import { createClient } from "@supabase/supabase-js";
-import { auth } from "@clerk/nextjs/server";
+import { safeAuth } from "@/lib/auth";
 
 const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL;
 const supabaseServiceKey = process.env.SUPABASE_SERVICE_ROLE_KEY;
@@ -25,7 +25,7 @@ export interface UserRecord {
 }
 
 export async function getCurrentUser(): Promise<UserRecord | null> {
-  const { userId } = await auth();
+  const { userId } = await safeAuth();
   if (!userId) return null;
 
   const client = getAdminClient();

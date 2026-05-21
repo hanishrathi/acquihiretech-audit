@@ -1,5 +1,5 @@
 import { NextResponse } from "next/server";
-import { auth, currentUser } from "@clerk/nextjs/server";
+import { safeAuth, safeCurrentUser } from "@/lib/auth";
 import { crawlSite } from "@/lib/crawler";
 import { gateResultsByTier } from "@/lib/tier-gate";
 import { saveAudit, getAudit, type AuditRecord } from "@/lib/db/audit-store";
@@ -48,12 +48,12 @@ export async function POST(request: Request) {
     }
 
     // Determine tier: signed-in users get their plan; anonymous users get basic
-    const { userId } = await auth();
+    const { userId } = await safeAuth();
     let tier: AuditTier = "basic";
     let userEmail = email;
 
     if (userId) {
-      const clerkUser = await currentUser();
+      const clerkUser = await safeCurrentUser();
       const clerkEmail = clerkUser?.emailAddresses[0]?.emailAddress || "";
       const clerkName =
         [clerkUser?.firstName, clerkUser?.lastName].filter(Boolean).join(" ") || null;

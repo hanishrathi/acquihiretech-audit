@@ -1,5 +1,5 @@
 import { NextResponse } from "next/server";
-import { auth, currentUser } from "@clerk/nextjs/server";
+import { safeAuth, safeCurrentUser } from "@/lib/auth";
 import { ensureUser } from "@/lib/db/user";
 import { PLANS, getProviderForCountry, type PlanId } from "@/lib/payments/plans";
 import { createRazorpayOrder, isRazorpayConfigured } from "@/lib/payments/razorpay";
@@ -9,7 +9,7 @@ import {
 } from "@/lib/payments/stripe";
 
 export async function POST(req: Request) {
-  const { userId } = await auth();
+  const { userId } = await safeAuth();
   if (!userId) {
     return NextResponse.json({ error: "Not authenticated" }, { status: 401 });
   }
@@ -21,7 +21,7 @@ export async function POST(req: Request) {
     return NextResponse.json({ error: "Invalid plan" }, { status: 400 });
   }
 
-  const clerkUser = await currentUser();
+  const clerkUser = await safeCurrentUser();
   const email = clerkUser?.emailAddresses[0]?.emailAddress || "";
   const name =
     [clerkUser?.firstName, clerkUser?.lastName].filter(Boolean).join(" ") || null;

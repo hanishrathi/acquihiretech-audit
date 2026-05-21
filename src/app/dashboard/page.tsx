@@ -1,6 +1,6 @@
-import { auth, currentUser } from "@clerk/nextjs/server";
 import { redirect } from "next/navigation";
 import { UserButton } from "@clerk/nextjs";
+import { safeAuth, safeCurrentUser } from "@/lib/auth";
 import { ensureUser, getUserAudits } from "@/lib/db/user";
 
 export const dynamic = "force-dynamic";
@@ -13,10 +13,10 @@ const PLAN_LABELS: Record<string, { label: string; color: string }> = {
 };
 
 export default async function DashboardPage() {
-  const { userId } = await auth();
+  const { userId } = await safeAuth();
   if (!userId) redirect("/sign-in");
 
-  const clerkUser = await currentUser();
+  const clerkUser = await safeCurrentUser();
   const email = clerkUser?.emailAddresses[0]?.emailAddress || "";
   const name =
     [clerkUser?.firstName, clerkUser?.lastName].filter(Boolean).join(" ") || null;

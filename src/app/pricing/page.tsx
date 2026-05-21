@@ -1,5 +1,5 @@
 import type { Metadata } from "next";
-import { auth } from "@clerk/nextjs/server";
+import { safeAuth } from "@/lib/auth";
 import { PricingClient } from "./PricingClient";
 
 export const metadata: Metadata = {
@@ -8,6 +8,6 @@ export const metadata: Metadata = {
 };
 
 export default async function PricingPage() {
-  const { userId } = await auth();
+  const { userId } = await safeAuth();
   return <PricingClient isSignedIn={Boolean(userId)} />;
 }
