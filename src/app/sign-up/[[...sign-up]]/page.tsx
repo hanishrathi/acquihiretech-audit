@@ -12,7 +12,7 @@ export default function SignUpPage() {
               <circle cx="22" cy="37" r="6.5" fill="#10b981" />
               <circle cx="7" cy="22" r="6.5" fill="#a855f7" />
             </svg>
-            <span className="font-display text-xl font-bold text-text">AcquiHire Audit</span>
+            <span className="font-display text-xl font-semibold text-text">AcquiHire Audit</span>
           </a>
           <p className="mt-4 text-sm text-text-secondary">
             Free forever plan. No credit card required.

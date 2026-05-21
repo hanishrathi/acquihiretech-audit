@@ -2,6 +2,8 @@
 
 import { useState } from "react";
 import { useRouter } from "next/navigation";
+import { SiteNav } from "@/components/SiteNav";
+import { SiteFooter } from "@/components/SiteFooter";
 
 const plans = [
   {
@@ -148,32 +150,11 @@ export function PricingClient({ isSignedIn }: PricingClientProps) {
 
   return (
     <div className="min-h-screen bg-white">
-      <nav className="sticky top-0 z-50 bg-white/80 backdrop-blur-xl border-b border-border-light">
-        <div className="max-w-[980px] mx-auto px-6 h-12 flex items-center justify-between">
-          <a href="/" className="flex items-center gap-2 text-sm">
-            <svg width="24" height="24" viewBox="0 0 44 44">
-              <circle cx="22" cy="7" r="6.5" fill="#f97316" />
-              <circle cx="37" cy="22" r="6.5" fill="#3b82f6" />
-              <circle cx="22" cy="37" r="6.5" fill="#10b981" />
-              <circle cx="7" cy="22" r="6.5" fill="#a855f7" />
-            </svg>
-            <span className="font-display font-bold text-text">AcquiHire Audit</span>
-          </a>
-          <div className="flex items-center gap-6">
-            <a href="/" className="text-sm text-text-secondary hover:text-text">Home</a>
-            <a
-              href={isSignedIn ? "/dashboard" : "/sign-in"}
-              className="text-sm px-4 py-1.5 bg-bg-dark text-white rounded-full hover:bg-black"
-            >
-              {isSignedIn ? "Dashboard" : "Sign In"}
-            </a>
-          </div>
-        </div>
-      </nav>
+      <SiteNav variant={isSignedIn ? "app" : "marketing"} />
 
       <main className="max-w-[1100px] mx-auto px-6 py-16">
         <div className="text-center mb-12">
-          <h1 className="font-display text-4xl md:text-5xl font-extrabold text-text mb-4">
+          <h1 className="font-display text-4xl md:text-5xl font-semibold tracking-[-0.015em] text-text mb-4">
             Simple, transparent pricing
           </h1>
           <p className="text-lg text-text-secondary max-w-lg mx-auto">
@@ -203,9 +184,9 @@ export function PricingClient({ isSignedIn }: PricingClientProps) {
                 </div>
               )}
 
-              <h3 className="font-display text-lg font-bold text-text mb-1">{plan.name}</h3>
+              <h3 className="font-display text-lg font-semibold text-text mb-1">{plan.name}</h3>
               <div className="flex items-baseline gap-1 mb-1">
-                <span className="font-display text-3xl font-extrabold text-text">{plan.price}</span>
+                <span className="font-display text-3xl font-semibold text-text">{plan.price}</span>
                 <span className="text-sm text-text-secondary">{plan.priceNote}</span>
               </div>
               <p className="text-sm text-text-secondary mb-6">{plan.description}</p>
@@ -213,7 +194,7 @@ export function PricingClient({ isSignedIn }: PricingClientProps) {
               <button
                 onClick={() => handleUpgrade(plan.id)}
                 disabled={loading !== null}
-                className={`block w-full text-center py-3 rounded-[12px] font-medium text-sm transition-all disabled:opacity-50 ${
+                className={`block w-full text-center py-3 rounded-[980px] font-medium text-sm transition-all disabled:opacity-50 ${
                   plan.highlighted
                     ? "bg-engine-conversion text-white hover:opacity-90"
                     : "bg-bg-dark text-white hover:bg-black"
@@ -242,18 +223,19 @@ export function PricingClient({ isSignedIn }: PricingClientProps) {
 
         {/* Agency Tier */}
         <div className="p-8 rounded-[18px] bg-bg-dark text-white text-center">
-          <h2 className="font-display text-2xl font-bold mb-2">Agency Plan — ₹14,999/mo</h2>
+          <h2 className="font-display text-2xl font-semibold mb-2">Agency Plan — ₹14,999/mo</h2>
           <p className="text-text-on-dark-muted mb-6 max-w-lg mx-auto">
             Multi-client management, unlimited audits, white-label reports, custom branding, and a dedicated account manager.
           </p>
           <a
             href="https://acquihiretech.com/contact.html"
-            className="inline-flex px-6 py-3 bg-white text-bg-dark rounded-[12px] font-medium text-sm hover:bg-bg-tint"
+            className="inline-flex px-6 py-3 bg-white text-bg-dark rounded-[980px] font-medium text-sm hover:bg-bg-tint"
           >
             Contact Sales
           </a>
         </div>
       </main>
+      <SiteFooter />
     </div>
   );
 }

@@ -59,7 +59,7 @@ export function ScoreGauge({ score, size = 120, label }: ScoreGaugeProps) {
       {/* Center text */}
       <div className="absolute inset-0 flex flex-col items-center justify-center">
         <span
-          className="font-display font-extrabold leading-none"
+          className="font-display font-semibold leading-none"
           style={{ fontSize: size * 0.28, color }}
         >
           {roundedScore}

@@ -2,6 +2,8 @@
 
 import { useState } from "react";
 import { useRouter } from "next/navigation";
+import { SiteNav } from "@/components/SiteNav";
+import { SiteFooter } from "@/components/SiteFooter";
 
 export default function HomePage() {
   const [url, setUrl] = useState("");
@@ -68,28 +70,10 @@ export default function HomePage() {
 
   return (
     <div className="min-h-screen flex flex-col">
-      {/* Navigation */}
-      <nav className="fixed top-0 left-0 right-0 z-50 bg-white/80 backdrop-blur-xl border-b border-border-light">
-        <div className="max-w-[980px] mx-auto px-6 h-12 flex items-center justify-between">
-          <a href="https://acquihiretech.com" className="flex items-center gap-2 text-sm text-text-secondary hover:text-text transition-colors">
-            <svg width="24" height="24" viewBox="0 0 44 44">
-              <circle cx="22" cy="7" r="6.5" fill="#f97316" />
-              <circle cx="37" cy="22" r="6.5" fill="#3b82f6" />
-              <circle cx="22" cy="37" r="6.5" fill="#10b981" />
-              <circle cx="7" cy="22" r="6.5" fill="#a855f7" />
-            </svg>
-            <span className="font-display font-bold">AcquiHire</span>
-          </a>
-          <div className="flex items-center gap-6">
-            <a href="/pricing" className="text-sm text-text-secondary hover:text-text transition-colors">Pricing</a>
-            <a href="/sign-in" className="text-sm text-text-secondary hover:text-text transition-colors">Sign In</a>
-            <a href="/sign-up" className="text-sm px-4 py-1.5 bg-bg-dark text-white rounded-full hover:bg-black transition-colors">Sign Up</a>
-          </div>
-        </div>
-      </nav>
+      <SiteNav variant="marketing" />
 
       {/* Hero Section */}
-      <main className="flex-1 flex flex-col items-center justify-center px-6 pt-24 pb-16">
+      <main className="flex-1 flex flex-col items-center justify-center px-6 pt-20 pb-16">
         <div className="max-w-[720px] w-full text-center">
           {/* Badge */}
           <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-bg-tint border border-border-light text-xs text-text-secondary mb-6">
@@ -98,7 +82,7 @@ export default function HomePage() {
           </div>
 
           {/* Headline */}
-          <h1 className="font-display text-5xl md:text-6xl font-extrabold tracking-tight text-text leading-tight mb-4">
+          <h1 className="font-display text-5xl md:text-6xl font-semibold tracking-[-0.015em] text-text leading-[1.05] mb-4">
             Audit your website
             <br />
             <span className="bg-gradient-to-r from-engine-growth via-engine-conversion to-engine-operations bg-clip-text text-transparent">
@@ -130,7 +114,7 @@ export default function HomePage() {
                 </div>
                 <button
                   type="submit"
-                  className="px-6 py-3 bg-bg-dark text-white rounded-[12px] font-medium text-sm hover:bg-black transition-all hover:shadow-lg"
+                  className="px-6 py-3 bg-text text-white rounded-[980px] font-medium text-sm hover:bg-black transition-all hover:shadow-lg"
                 >
                   Audit Free
                 </button>
@@ -161,7 +145,7 @@ export default function HomePage() {
                 </div>
                 <button
                   type="submit"
-                  className="px-6 py-3 bg-bg-dark text-white rounded-[12px] font-medium text-sm hover:bg-black transition-all hover:shadow-lg"
+                  className="px-6 py-3 bg-text text-white rounded-[980px] font-medium text-sm hover:bg-black transition-all hover:shadow-lg"
                 >
                   Start Audit
                 </button>
@@ -216,7 +200,7 @@ export default function HomePage() {
           ].map((feature) => (
             <div key={feature.title} className="p-6 rounded-[18px] bg-bg-tint border border-border-light">
               <div className="text-2xl mb-3">{feature.icon}</div>
-              <h3 className="font-display font-bold text-text mb-2">{feature.title}</h3>
+              <h3 className="font-display font-semibold text-text mb-2">{feature.title}</h3>
               <p className="text-sm text-text-secondary leading-relaxed">{feature.description}</p>
             </div>
           ))}
@@ -224,7 +208,7 @@ export default function HomePage() {
 
         {/* Comparison Table */}
         <div className="max-w-[980px] w-full mt-16 px-6">
-          <h2 className="font-display text-2xl font-bold text-center text-text mb-8">
+          <h2 className="font-display text-2xl font-semibold text-center text-text mb-8">
             Why AcquiHire Audit?
           </h2>
           <div className="overflow-x-auto rounded-[18px] border border-border-light">
@@ -259,22 +243,7 @@ export default function HomePage() {
         </div>
       </main>
 
-      {/* Footer */}
-      <footer className="border-t border-border-light py-8 px-6">
-        <div className="max-w-[980px] mx-auto flex flex-col md:flex-row items-center justify-between gap-4">
-          <p className="text-sm text-text-secondary">
-            Built by{" "}
-            <a href="https://acquihiretech.com" className="text-link hover:text-link-hover">
-              AcquiHireTech
-            </a>
-          </p>
-          <div className="flex items-center gap-6 text-sm text-text-secondary">
-            <a href="https://acquihiretech.com/privacy.html" className="hover:text-text transition-colors">Privacy</a>
-            <a href="https://acquihiretech.com/terms.html" className="hover:text-text transition-colors">Terms</a>
-            <a href="https://acquihiretech.com/contact.html" className="hover:text-text transition-colors">Contact</a>
-          </div>
-        </div>
-      </footer>
+      <SiteFooter />
     </div>
   );
 }

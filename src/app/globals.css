@@ -53,7 +53,11 @@
   --color-text: var(--text);
   --color-text-secondary: var(--text-secondary);
   --color-text-dim: var(--text-dim);
+  --color-text-on-dark: var(--text-on-dark);
+  --color-text-on-dark-muted: var(--text-on-dark-muted);
+  --color-bg: var(--bg);
   --color-bg-tint: var(--bg-tint);
+  --color-bg-near-white: var(--bg-near-white);
   --color-bg-dark: var(--bg-dark);
   --color-link: var(--link);
   --color-link-hover: var(--link-hover);
@@ -75,10 +79,33 @@
 body {
   background: var(--background);
   color: var(--foreground);
-  font-family: var(--font-body);
+  /* Match main site: Syne is the global typeface */
+  font-family: var(--font-display);
+  font-size: 17px;
+  line-height: 1.47059;
+  letter-spacing: -0.022em;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
   text-rendering: optimizeLegibility;
+}
+
+/* Match main site: headings are weight 600, not extrabold */
+h1, h2, h3, h4, h5, h6 {
+  color: var(--text);
+  font-weight: 600;
+  letter-spacing: -0.015em;
+}
+
+p { letter-spacing: -0.022em; }
+
+/* Pill buttons + dark translucent nav helpers — main site parity */
+.site-header {
+  position: sticky;
+  top: 0;
+  z-index: 9999;
+  background: rgba(0, 0, 0, 0.8);
+  backdrop-filter: saturate(180%) blur(20px);
+  -webkit-backdrop-filter: saturate(180%) blur(20px);
 }
 
 /* Score gauge animations */

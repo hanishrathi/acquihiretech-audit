@@ -87,7 +87,7 @@ export function ReportClient({ id }: { id: string }) {
               style={{ width: `${progress}%` }}
             />
           </div>
-          <h2 className="font-display text-xl font-bold text-text mb-2">
+          <h2 className="font-display text-xl font-semibold text-text mb-2">
             Analyzing your website...
           </h2>
           <p className="text-sm text-text-secondary">
@@ -103,7 +103,7 @@ export function ReportClient({ id }: { id: string }) {
       <div className="min-h-screen flex items-center justify-center px-6">
         <div className="max-w-[480px] w-full text-center">
           <div className="text-4xl mb-4">⚠️</div>
-          <h2 className="font-display text-xl font-bold text-text mb-2">
+          <h2 className="font-display text-xl font-semibold text-text mb-2">
             Audit Failed
           </h2>
           <p className="text-sm text-text-secondary mb-6">
@@ -130,22 +130,29 @@ export function ReportClient({ id }: { id: string }) {
 
   return (
     <div className="min-h-screen bg-bg-near-white">
-      {/* Top Nav */}
-      <nav className="sticky top-0 z-50 bg-white/80 backdrop-blur-xl border-b border-border-light">
-        <div className="max-w-[1200px] mx-auto px-6 h-12 flex items-center justify-between">
-          <a href="/" className="flex items-center gap-2 text-sm">
-            <svg width="20" height="20" viewBox="0 0 44 44">
+      {/* Top Nav — dark, matches main site */}
+      <nav className="site-header">
+        <div className="max-w-[1200px] mx-auto px-[22px] h-12 flex items-center justify-between">
+          <a
+            href="/"
+            className="flex items-center gap-2 text-[14px] text-text-on-dark/90 hover:text-text-on-dark transition-opacity"
+          >
+            <svg width="26" height="26" viewBox="0 0 44 44" aria-hidden="true">
+              <line x1="22" y1="7" x2="37" y2="22" stroke="#f97316" strokeWidth="1.6" strokeOpacity="0.38" strokeLinecap="round" />
+              <line x1="37" y1="22" x2="22" y2="37" stroke="#3b82f6" strokeWidth="1.6" strokeOpacity="0.38" strokeLinecap="round" />
+              <line x1="22" y1="37" x2="7" y2="22" stroke="#10b981" strokeWidth="1.6" strokeOpacity="0.38" strokeLinecap="round" />
+              <line x1="7" y1="22" x2="22" y2="7" stroke="#a855f7" strokeWidth="1.6" strokeOpacity="0.38" strokeLinecap="round" />
               <circle cx="22" cy="7" r="6.5" fill="#f97316" />
               <circle cx="37" cy="22" r="6.5" fill="#3b82f6" />
               <circle cx="22" cy="37" r="6.5" fill="#10b981" />
               <circle cx="7" cy="22" r="6.5" fill="#a855f7" />
             </svg>
-            <span className="font-display font-bold text-text">Audit Report</span>
+            AcquihireTech
           </a>
           <div className="flex items-center gap-4">
-            <span className="text-xs text-text-dim font-mono hidden sm:inline">{result.metadata.domain}</span>
+            <span className="text-xs text-text-on-dark-muted font-mono hidden sm:inline">{result.metadata.domain}</span>
             <ShareButton domain={result.metadata.domain} score={Math.round(result.overallScore)} />
-            <a href="/pricing" className="text-xs px-3 py-1 bg-engine-growth text-white rounded-full font-medium hover:opacity-90 transition-opacity">
+            <a href="/pricing" className="text-[12px] px-4 py-[5px] bg-white/12 text-text-on-dark rounded-[980px] font-medium hover:bg-white/22 transition-colors">
               Upgrade
             </a>
           </div>
@@ -157,7 +164,7 @@ export function ReportClient({ id }: { id: string }) {
         <div className="flex flex-col md:flex-row items-center gap-8 mb-8">
           <ScoreGauge score={result.overallScore} size={160} />
           <div className="text-center md:text-left">
-            <h1 className="font-display text-3xl font-bold text-text mb-2">
+            <h1 className="font-display text-3xl font-semibold text-text mb-2">
               {result.metadata.domain}
             </h1>
             <p className="text-text-secondary mb-4">
@@ -186,7 +193,7 @@ export function ReportClient({ id }: { id: string }) {
         <BenchmarkStrip score={result.overallScore} />
 
         {/* Category Grid */}
-        <h2 className="font-display text-xl font-bold text-text mb-4 mt-8">Audit Categories</h2>
+        <h2 className="font-display text-xl font-semibold text-text mb-4 mt-8">Audit Categories</h2>
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 mb-8">
           {visibleCategories.map(([category, score]) => (
             <CategoryCard
@@ -209,13 +216,13 @@ export function ReportClient({ id }: { id: string }) {
         </div>
 
         {/* Issues */}
-        <h2 className="font-display text-xl font-bold text-text mb-4">Issues Found</h2>
+        <h2 className="font-display text-xl font-semibold text-text mb-4">Issues Found</h2>
         <IssueList issues={result.issues} tier={audit.tier} />
 
         {/* Upgrade CTA */}
         {result.hiddenCount > 0 && (
           <div className="mt-8 p-8 rounded-[18px] bg-gradient-to-br from-bg-tint to-white border border-border-light text-center">
-            <h3 className="font-display text-xl font-bold text-text mb-2">
+            <h3 className="font-display text-xl font-semibold text-text mb-2">
               Unlock {result.hiddenCount} more issues
             </h3>
             <p className="text-text-secondary text-sm mb-6 max-w-md mx-auto">
