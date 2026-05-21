@@ -2,6 +2,28 @@ import { NextResponse } from "next/server";
 import { createClient } from "@supabase/supabase-js";
 import { getLastSupabaseError } from "@/lib/db/audit-store";
 
+/**
+ * Reports a 3-key integration status without leaking secret values.
+ * Each key shows ✅/❌ — and the overall status is "ready" only if all 3 present.
+ */
+function maskStatus(
+  key1?: string,
+  key2?: string,
+  key3?: string
+): { status: string; keys: string[] } {
+  const present = [Boolean(key1), Boolean(key2), Boolean(key3)];
+  const count = present.filter(Boolean).length;
+  return {
+    status:
+      count === 3
+        ? "✅ fully configured"
+        : count === 0
+          ? "❌ not configured"
+          : `⚠️ partial (${count}/3 keys)`,
+    keys: present.map((p, i) => `key${i + 1}: ${p ? "✅" : "❌"}`),
+  };
+}
+
 export async function GET() {
   const url = process.env.NEXT_PUBLIC_SUPABASE_URL;
   const anonKey = process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY;
@@ -31,6 +53,32 @@ export async function GET() {
       email_leads_writable: "not tested",
       issues_writable: "not tested",
       schema_has_email_column: "not tested",
+    },
+    integrations: {
+      // Auth
+      clerk: maskStatus(
+        process.env.NEXT_PUBLIC_CLERK_PUBLISHABLE_KEY,
+        process.env.CLERK_SECRET_KEY,
+        process.env.CLERK_WEBHOOK_SECRET
+      ),
+      // Payments — Razorpay (India)
+      razorpay: maskStatus(
+        process.env.RAZORPAY_KEY_ID,
+        process.env.RAZORPAY_KEY_SECRET,
+        process.env.RAZORPAY_WEBHOOK_SECRET
+      ),
+      // Payments — Stripe (international)
+      stripe: maskStatus(
+        process.env.STRIPE_SECRET_KEY,
+        process.env.NEXT_PUBLIC_STRIPE_PUBLISHABLE_KEY,
+        process.env.STRIPE_WEBHOOK_SECRET
+      ),
+      // AI
+      anthropic: process.env.ANTHROPIC_API_KEY ? "✅ configured" : "❌ missing",
+      openai: process.env.OPENAI_API_KEY ? "✅ configured" : "❌ missing",
+      // Infra
+      redis: process.env.REDIS_URL ? "✅ configured" : "❌ missing",
+      resend: process.env.RESEND_API_KEY ? "✅ configured" : "❌ missing",
     },
   };
 
