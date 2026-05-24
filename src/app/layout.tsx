@@ -78,7 +78,6 @@ export default function RootLayout({
       className={`${syne.variable} ${dmSans.variable} ${jetbrainsMono.variable} h-full antialiased`}
     >
       <head>
-        <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
         <link rel="canonical" href="https://audit.acquihiretech.com" />
       </head>
       <body className="min-h-full flex flex-col bg-background text-foreground">
