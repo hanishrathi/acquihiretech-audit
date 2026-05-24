@@ -1,6 +1,7 @@
 import { NextResponse } from "next/server";
 import { createClient } from "@supabase/supabase-js";
 import { safeAuth } from "@/lib/auth";
+import { notifyAdminsOfSubmission } from "@/lib/notifications/admin-alerts";
 
 const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL!;
 const supabaseServiceKey = process.env.SUPABASE_SERVICE_ROLE_KEY!;
@@ -62,6 +63,12 @@ export async function POST(
   if (updErr) {
     return NextResponse.json({ error: updErr.message }, { status: 500 });
   }
+
+  notifyAdminsOfSubmission({
+    ...payment,
+    crypto_tx_hash: txHash,
+    status: "submitted",
+  }).catch((e) => console.error("[notify] admin alert failed:", e));
 
   return NextResponse.json({ ok: true, status: "submitted" });
 }

@@ -94,7 +94,14 @@ export async function GET() {
       openai: process.env.OPENAI_API_KEY ? "✅ configured" : "❌ missing",
       // Infra
       redis: process.env.REDIS_URL ? "✅ configured" : "❌ missing",
-      resend: process.env.RESEND_API_KEY ? "✅ configured" : "❌ missing",
+      resend: {
+        apiKey: process.env.RESEND_API_KEY ? "✅ configured" : "❌ missing",
+        fromEmail: process.env.RESEND_FROM_EMAIL || "(default: noreply@acquihiretech.com)",
+        notifyTo:
+          process.env.NOTIFY_EMAIL ||
+          process.env.ADMIN_EMAILS ||
+          "❌ no recipients (set NOTIFY_EMAIL or ADMIN_EMAILS)",
+      },
       // Manual payments
       upi: {
         status:
