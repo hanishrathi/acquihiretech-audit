@@ -24,7 +24,7 @@ function maskStatus(
   };
 }
 
-export async function GET() {
+export async function GET(request: Request) {
   const url = process.env.NEXT_PUBLIC_SUPABASE_URL;
   const anonKey = process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY;
   const serviceKey = process.env.SUPABASE_SERVICE_ROLE_KEY;
@@ -94,9 +94,12 @@ export async function GET() {
       openai: process.env.OPENAI_API_KEY ? "✅ configured" : "❌ missing",
       // Infra
       redis: process.env.REDIS_URL ? "✅ configured" : "❌ missing",
-      resend: {
-        apiKey: process.env.RESEND_API_KEY ? "✅ configured" : "❌ missing",
-        fromEmail: process.env.RESEND_FROM_EMAIL || "(default: noreply@acquihiretech.com)",
+      smtp: {
+        host: process.env.SMTP_HOST || "❌ missing",
+        port: process.env.SMTP_PORT || "(default 465)",
+        user: process.env.SMTP_USER || "❌ missing",
+        pass: process.env.SMTP_PASS ? "✅ set" : "❌ missing",
+        from: process.env.SMTP_FROM || `(default: ${process.env.SMTP_USER || "?"})`,
         notifyTo:
           process.env.NOTIFY_EMAIL ||
           process.env.ADMIN_EMAILS ||
@@ -154,6 +157,39 @@ export async function GET() {
     }
   } else {
     report.razorpayOrderTest = { status: "skipped — Razorpay keys missing" };
+  }
+
+  // ── Live SMTP test (only when ?testEmail=1) ──────────────────────────────
+  const url2 = new URL(request.url);
+  const shouldTestEmail = url2.searchParams.get("testEmail") === "1";
+
+  if (!process.env.SMTP_HOST || !process.env.SMTP_USER || !process.env.SMTP_PASS) {
+    report.smtpTest = "skipped — SMTP env vars not configured";
+  } else if (!shouldTestEmail) {
+    report.smtpTest = "skipped — hit /api/debug?testEmail=1 to send a real test";
+  } else {
+    try {
+      const { sendEmail } = await import("@/lib/notifications/smtp");
+      const to =
+        process.env.NOTIFY_EMAIL ||
+        (process.env.ADMIN_EMAILS || "").split(",")[0]?.trim() ||
+        "";
+      if (!to) {
+        report.smtpTest = "❌ no NOTIFY_EMAIL or ADMIN_EMAILS to send to";
+      } else {
+        const r = await sendEmail({
+          to,
+          subject: "AcquiHire Audit — SMTP test from /api/debug",
+          html: `<p>This is a test email from <code>/api/debug?testEmail=1</code> sent at ${new Date().toISOString()}.</p><p>If you see this, SMTP delivery to <strong>${to}</strong> works.</p>`,
+          text: `SMTP test from /api/debug at ${new Date().toISOString()}. If you see this, delivery to ${to} works.`,
+        });
+        report.smtpTest = r.ok
+          ? `✅ sent to ${to} (messageId: ${r.id})`
+          : `❌ failed: ${r.error}`;
+      }
+    } catch (err: any) {
+      report.smtpTest = `❌ exception: ${err?.message || String(err)}`;
+    }
   }
 
   if (!url || !serviceKey) {

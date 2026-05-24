@@ -1,4 +1,4 @@
-import { sendEmail } from "./resend";
+import { sendEmail } from "./smtp";
 import { getAdminEmails } from "@/lib/admin";
 import { CRYPTO_CHAINS, type CryptoChain } from "@/lib/payments/crypto";
 
