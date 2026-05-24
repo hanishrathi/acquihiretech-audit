@@ -81,7 +81,7 @@ export default function RootLayout({
         <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
         <link rel="canonical" href="https://audit.acquihiretech.com" />
       </head>
-      <body className="min-h-full flex flex-col bg-background text-foreground font-body">
+      <body className="min-h-full flex flex-col bg-background text-foreground">
         {children}
       </body>
     </html>
@@ -97,7 +97,7 @@ export default function RootLayout({
         variables: {
           colorPrimary: "#1d1d1f",
           colorBackground: "#ffffff",
-          fontFamily: "DM Sans, -apple-system, sans-serif",
+          fontFamily: "Syne, -apple-system, sans-serif",
           borderRadius: "12px",
         },
       }}
