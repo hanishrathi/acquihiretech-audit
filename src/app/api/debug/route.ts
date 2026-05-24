@@ -95,6 +95,25 @@ export async function GET() {
       // Infra
       redis: process.env.REDIS_URL ? "✅ configured" : "❌ missing",
       resend: process.env.RESEND_API_KEY ? "✅ configured" : "❌ missing",
+      // Manual payments
+      upi: {
+        status:
+          process.env.UPI_PAYEE_ID && process.env.UPI_PAYEE_NAME
+            ? "✅ configured"
+            : "❌ missing",
+        payeeId: process.env.UPI_PAYEE_ID || "missing",
+        payeeName: process.env.UPI_PAYEE_NAME || "missing",
+      },
+      crypto: {
+        btc: process.env.CRYPTO_BTC_ADDRESS ? "✅ configured" : "❌ missing",
+        eth: process.env.CRYPTO_ETH_ADDRESS ? "✅ configured" : "❌ missing",
+        polygon: process.env.CRYPTO_POLYGON_ADDRESS
+          ? "✅ configured"
+          : "❌ missing",
+      },
+      admin: {
+        emails: process.env.ADMIN_EMAILS || "❌ missing — set ADMIN_EMAILS",
+      },
     },
   };
 

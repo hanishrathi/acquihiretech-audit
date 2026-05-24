@@ -28,7 +28,6 @@ const plans = [
       "No competitor comparison",
     ],
     cta: "Start Free Audit",
-    ctaHref: "/",
     highlighted: false,
   },
   {
@@ -86,62 +85,47 @@ interface PricingClientProps {
   isSignedIn: boolean;
 }
 
+type PayMethod = "upi" | "crypto";
+
 export function PricingClient({ isSignedIn }: PricingClientProps) {
+  const [chooserPlan, setChooserPlan] = useState<string | null>(null);
   const [loading, setLoading] = useState<string | null>(null);
   const [error, setError] = useState<string | null>(null);
   const router = useRouter();
 
-  async function handleUpgrade(planId: string) {
+  function startUpgrade(planId: string) {
+    setError(null);
     if (planId === "free") {
       router.push("/");
       return;
     }
-
     if (!isSignedIn) {
-      router.push(`/sign-up?redirect_url=/pricing`);
+      router.push("/sign-up?redirect_url=/pricing");
       return;
     }
+    setChooserPlan(planId);
+  }
 
-    setLoading(planId);
+  async function pickMethod(method: PayMethod, chain?: string) {
+    if (!chooserPlan) return;
+    setLoading(`${method}-${chain || ""}`);
     setError(null);
 
     try {
-      const res = await fetch("/api/checkout", {
+      const endpoint =
+        method === "upi" ? "/api/checkout/upi" : "/api/checkout/crypto";
+      const res = await fetch(endpoint, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ planId }),
+        body: JSON.stringify({ planId: chooserPlan, chain }),
       });
-
       const data = await res.json();
-
       if (!res.ok) {
-        setError(data.error || "Checkout failed. Please try again.");
+        setError(data.error || "Failed to start checkout");
         setLoading(null);
         return;
       }
-
-      if (data.provider === "stripe" && data.url) {
-        window.location.href = data.url;
-      } else if (data.provider === "razorpay") {
-        // Load Razorpay checkout dynamically
-        await loadRazorpayScript();
-        const options = {
-          key: data.keyId,
-          amount: data.amount,
-          currency: data.currency,
-          order_id: data.orderId,
-          name: "AcquiHire Audit",
-          description: `${planId.charAt(0).toUpperCase() + planId.slice(1)} plan subscription`,
-          handler: function () {
-            window.location.href = `/dashboard?upgraded=${planId}`;
-          },
-          theme: { color: "#1d1d1f" },
-        };
-        // @ts-ignore
-        const rzp = new window.Razorpay(options);
-        rzp.open();
-        setLoading(null);
-      }
+      window.location.href = `/checkout/${method}/${data.paymentId}`;
     } catch (err: any) {
       setError(err.message || "Network error");
       setLoading(null);
@@ -158,7 +142,7 @@ export function PricingClient({ isSignedIn }: PricingClientProps) {
             Simple, transparent pricing
           </h1>
           <p className="text-lg text-text-secondary max-w-lg mx-auto">
-            Start free, upgrade when you need deeper analysis. Cancel anytime.
+            Pay via UPI or cryptocurrency. Cancel anytime.
           </p>
         </div>
 
@@ -192,7 +176,7 @@ export function PricingClient({ isSignedIn }: PricingClientProps) {
               <p className="text-sm text-text-secondary mb-6">{plan.description}</p>
 
               <button
-                onClick={() => handleUpgrade(plan.id)}
+                onClick={() => startUpgrade(plan.id)}
                 disabled={loading !== null}
                 className={`block w-full text-center py-3 rounded-[980px] font-medium text-sm transition-all disabled:opacity-50 ${
                   plan.highlighted
@@ -200,7 +184,7 @@ export function PricingClient({ isSignedIn }: PricingClientProps) {
                     : "bg-bg-dark text-white hover:bg-black"
                 }`}
               >
-                {loading === plan.id ? "Loading..." : plan.cta}
+                {plan.cta}
               </button>
 
               <ul className="mt-6 space-y-2">
@@ -225,7 +209,8 @@ export function PricingClient({ isSignedIn }: PricingClientProps) {
         <div className="p-8 rounded-[18px] bg-bg-dark text-white text-center">
           <h2 className="font-display text-2xl font-semibold mb-2">Agency Plan — ₹14,999/mo</h2>
           <p className="text-text-on-dark-muted mb-6 max-w-lg mx-auto">
-            Multi-client management, unlimited audits, white-label reports, custom branding, and a dedicated account manager.
+            Multi-client management, unlimited audits, white-label reports, custom branding,
+            and a dedicated account manager.
           </p>
           <a
             href="https://acquihiretech.com/contact.html"
@@ -235,20 +220,80 @@ export function PricingClient({ isSignedIn }: PricingClientProps) {
           </a>
         </div>
       </main>
+
+      {/* Payment method chooser modal */}
+      {chooserPlan && (
+        <div
+          className="fixed inset-0 z-[100] bg-black/40 backdrop-blur-sm flex items-center justify-center p-4"
+          onClick={() => !loading && setChooserPlan(null)}
+        >
+          <div
+            className="bg-white rounded-[18px] max-w-md w-full p-6 shadow-2xl"
+            onClick={(e) => e.stopPropagation()}
+          >
+            <h3 className="font-display text-xl font-semibold text-text mb-1">
+              Choose payment method
+            </h3>
+            <p className="text-sm text-text-secondary mb-6">
+              For the <span className="font-medium text-text capitalize">{chooserPlan}</span> plan
+            </p>
+
+            <button
+              onClick={() => pickMethod("upi")}
+              disabled={loading !== null}
+              className="w-full p-4 mb-3 rounded-[12px] border border-border text-left hover:border-text transition-colors disabled:opacity-50 flex items-center gap-3"
+            >
+              <div className="text-2xl">🇮🇳</div>
+              <div className="flex-1">
+                <div className="font-medium text-text">UPI / QR Code</div>
+                <div className="text-xs text-text-secondary">
+                  Pay with any UPI app — GPay, PhonePe, Paytm, BHIM
+                </div>
+              </div>
+              <div className="text-xs text-text-dim">
+                {loading === "upi-" ? "..." : "→"}
+              </div>
+            </button>
+
+            <div className="mb-3">
+              <div className="text-xs text-text-secondary uppercase tracking-wide mb-2 px-1">
+                Cryptocurrency
+              </div>
+              {[
+                { chain: "btc", label: "Bitcoin (BTC)", icon: "₿" },
+                { chain: "eth", label: "Ethereum (ETH)", icon: "Ξ" },
+                { chain: "usdc-eth", label: "USDC on Ethereum", icon: "$" },
+                { chain: "usdc-polygon", label: "USDC on Polygon", icon: "$" },
+              ].map((c) => (
+                <button
+                  key={c.chain}
+                  onClick={() => pickMethod("crypto", c.chain)}
+                  disabled={loading !== null}
+                  className="w-full p-3 mb-2 rounded-[12px] border border-border text-left hover:border-text transition-colors disabled:opacity-50 flex items-center gap-3"
+                >
+                  <div className="text-lg font-mono w-6 text-center">{c.icon}</div>
+                  <div className="flex-1 text-sm text-text">{c.label}</div>
+                  <div className="text-xs text-text-dim">
+                    {loading === `crypto-${c.chain}` ? "..." : "→"}
+                  </div>
+                </button>
+              ))}
+            </div>
+
+            <button
+              onClick={() => setChooserPlan(null)}
+              disabled={loading !== null}
+              className="w-full text-center py-2 text-sm text-text-secondary hover:text-text"
+            >
+              Cancel
+            </button>
+
+            {error && <p className="mt-3 text-sm text-score-poor">{error}</p>}
+          </div>
+        </div>
+      )}
+
       <SiteFooter />
     </div>
   );
-}
-
-function loadRazorpayScript() {
-  return new Promise<void>((resolve, reject) => {
-    if (typeof window !== "undefined" && (window as any).Razorpay) {
-      return resolve();
-    }
-    const s = document.createElement("script");
-    s.src = "https://checkout.razorpay.com/v1/checkout.js";
-    s.onload = () => resolve();
-    s.onerror = () => reject(new Error("Failed to load Razorpay"));
-    document.body.appendChild(s);
-  });
 }
