@@ -118,9 +118,16 @@ function PaymentCard({ payment }: { payment: any }) {
             <span className="text-xs px-2 py-0.5 rounded-full bg-bg-tint text-text font-medium uppercase">
               {payment.method}
             </span>
-            <span className="text-xs px-2 py-0.5 rounded-full bg-blue-50 text-blue-700 font-medium uppercase">
-              {payment.plan_id}
-            </span>
+            {payment.plan_id && (
+              <span className="text-xs px-2 py-0.5 rounded-full bg-blue-50 text-blue-700 font-medium uppercase">
+                Plan: {payment.plan_id}
+              </span>
+            )}
+            {payment.product_slug && (
+              <span className="text-xs px-2 py-0.5 rounded-full bg-orange-50 text-orange-700 font-medium">
+                Product: {payment.product_slug}
+              </span>
+            )}
             <span className="font-display text-lg font-semibold text-text">₹{amount}</span>
           </div>
           <p className="text-sm text-text-secondary">{payment.user_email}</p>

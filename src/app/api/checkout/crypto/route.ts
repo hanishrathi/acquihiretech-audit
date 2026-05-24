@@ -3,6 +3,7 @@ import { createClient } from "@supabase/supabase-js";
 import { safeAuth, safeCurrentUser } from "@/lib/auth";
 import { ensureUser } from "@/lib/db/user";
 import { PLANS, type PlanId } from "@/lib/payments/plans";
+import { getProductBySlug } from "@/lib/products";
 import {
   CRYPTO_CHAINS,
   type CryptoChain,
@@ -32,10 +33,22 @@ export async function POST(req: Request) {
   }
 
   const body = await req.json();
-  const planId = body.planId as PlanId;
+  const planId = body.planId as PlanId | undefined;
+  const productSlug = body.productSlug as string | undefined;
   const chain = body.chain as CryptoChain;
-  if (!planId || !PLANS[planId]) {
+
+  if (!planId && !productSlug) {
+    return NextResponse.json(
+      { error: "planId or productSlug required" },
+      { status: 400 }
+    );
+  }
+  if (planId && !PLANS[planId]) {
     return NextResponse.json({ error: "Invalid plan" }, { status: 400 });
+  }
+  const product = productSlug ? getProductBySlug(productSlug) : null;
+  if (productSlug && !product) {
+    return NextResponse.json({ error: "Invalid product" }, { status: 400 });
   }
   if (!chain || !CRYPTO_CHAINS[chain] || !configured.includes(chain)) {
     return NextResponse.json(
@@ -58,11 +71,11 @@ export async function POST(req: Request) {
     return NextResponse.json({ error: "User record failed" }, { status: 500 });
   }
 
-  const plan = PLANS[planId];
+  const amount = planId ? PLANS[planId].pricesINR : product!.priceINR;
 
   let cryptoAmount: string;
   try {
-    cryptoAmount = await convertInrToCrypto(plan.pricesINR, chain);
+    cryptoAmount = await convertInrToCrypto(amount, chain);
   } catch (err: any) {
     return NextResponse.json(
       { error: "Could not fetch current rate: " + err.message },
@@ -79,9 +92,10 @@ export async function POST(req: Request) {
     .insert({
       user_id: user.id,
       user_email: email,
-      plan_id: planId,
+      plan_id: planId || null,
+      product_slug: productSlug || null,
       method: "crypto",
-      amount_inr: plan.pricesINR,
+      amount_inr: amount,
       crypto_chain: chain,
       crypto_address: address,
       crypto_amount_native: cryptoAmount,

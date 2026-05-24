@@ -1,6 +1,7 @@
 import { sendEmail } from "./smtp";
 import { getAdminEmails } from "@/lib/admin";
 import { CRYPTO_CHAINS, type CryptoChain } from "@/lib/payments/crypto";
+import { getProductBySlug } from "@/lib/products";
 
 const baseUrl =
   process.env.NEXT_PUBLIC_APP_URL || "https://audit.acquihiretech.com";
@@ -41,7 +42,13 @@ export async function notifyAdminsOfSubmission(payment: any) {
     `;
   }
 
-  const subject = `New ${method} payment from ${payment.user_email} — ₹${amount} ${payment.plan_id} plan`;
+  const itemLabel = payment.plan_id
+    ? `${payment.plan_id} plan`
+    : payment.product_slug
+      ? `product: ${getProductBySlug(payment.product_slug)?.title || payment.product_slug}`
+      : "unknown item";
+
+  const subject = `New ${method} payment from ${payment.user_email} — ₹${amount} (${itemLabel})`;
   const html = `
     <div style="font-family: -apple-system, BlinkMacSystemFont, Segoe UI, sans-serif; max-width: 560px; margin: 0 auto; color:#1d1d1f; padding:24px">
       <h2 style="font-weight:600; letter-spacing:-0.015em; margin:0 0 16px">
@@ -51,7 +58,7 @@ export async function notifyAdminsOfSubmission(payment: any) {
 
       <div style="background:#f5f5f7; border-radius:12px; padding:20px; margin-bottom:24px">
         <p style="margin:0 0 8px"><strong>Customer:</strong> ${payment.user_email}</p>
-        <p style="margin:0 0 8px"><strong>Plan:</strong> ${payment.plan_id} (₹${amount}/mo)</p>
+        <p style="margin:0 0 8px"><strong>${payment.plan_id ? "Plan" : "Product"}:</strong> ${itemLabel} (₹${amount}${payment.plan_id ? "/mo" : ""})</p>
         <p style="margin:0 0 8px"><strong>Method:</strong> ${method}</p>
         ${methodDetails}
         <p style="margin:0; color:#86868b; font-size:13px"><strong>Payment ID:</strong> <code>${payment.id}</code></p>

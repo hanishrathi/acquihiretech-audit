@@ -57,6 +57,14 @@ export function SiteNav({ variant = "marketing" }: SiteNavProps) {
           </li>
           <li>
             <a
+              href="/shop"
+              className="text-[12px] text-text-on-dark/80 hover:text-text-on-dark px-2.5 h-12 flex items-center transition-opacity"
+            >
+              Shop
+            </a>
+          </li>
+          <li>
+            <a
               href="https://acquihiretech.com/services.html"
               className="text-[12px] text-text-on-dark/80 hover:text-text-on-dark px-2.5 h-12 flex items-center transition-opacity"
             >

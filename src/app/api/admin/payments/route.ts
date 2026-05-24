@@ -3,6 +3,7 @@ import { createClient } from "@supabase/supabase-js";
 import { safeAuth, safeCurrentUser } from "@/lib/auth";
 import { isAdminEmail } from "@/lib/admin";
 import type { PlanId } from "@/lib/payments/plans";
+import { sendProductDownloadEmail } from "@/lib/notifications/customer-emails";
 
 const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL!;
 const supabaseServiceKey = process.env.SUPABASE_SERVICE_ROLE_KEY!;
@@ -82,19 +83,36 @@ export async function POST(req: Request) {
     return NextResponse.json({ ok: true, status: "rejected" });
   }
 
-  // Approve — mark payment + upgrade user plan
-  const planId = payment.plan_id as PlanId;
-  const expiresAt = new Date();
-  expiresAt.setDate(expiresAt.getDate() + 31);
+  // Approve — branch by item type
+  let approvalNote = "";
 
-  await supabase
-    .from("users")
-    .update({
-      plan: planId,
-      plan_expires_at: expiresAt.toISOString(),
-      crawls_remaining: 999,
-    })
-    .eq("id", payment.user_id);
+  if (payment.plan_id) {
+    // Plan upgrade: bump user's plan + give them generous crawls
+    const planId = payment.plan_id as PlanId;
+    const expiresAt = new Date();
+    expiresAt.setDate(expiresAt.getDate() + 31);
+
+    await supabase
+      .from("users")
+      .update({
+        plan: planId,
+        plan_expires_at: expiresAt.toISOString(),
+        crawls_remaining: 999,
+      })
+      .eq("id", payment.user_id);
+
+    approvalNote = `plan upgraded to ${planId}`;
+  } else if (payment.product_slug) {
+    // Product order: email the download link to the buyer
+    const result = await sendProductDownloadEmail(payment);
+    if (!result.ok) {
+      console.error("[admin] product email failed:", result.error);
+      // Don't block approval on email failure — admin can resend manually
+      approvalNote = `product approved BUT email failed: ${result.error}`;
+    } else {
+      approvalNote = `download emailed to ${payment.user_email}`;
+    }
+  }
 
   await supabase
     .from("pending_payments")
@@ -102,8 +120,15 @@ export async function POST(req: Request) {
       status: "approved",
       reviewed_by: guard.email,
       reviewed_at: new Date().toISOString(),
+      download_emailed_at: payment.product_slug
+        ? new Date().toISOString()
+        : null,
     })
     .eq("id", paymentId);
 
-  return NextResponse.json({ ok: true, status: "approved", plan: planId });
+  return NextResponse.json({
+    ok: true,
+    status: "approved",
+    note: approvalNote,
+  });
 }
