@@ -98,7 +98,270 @@ h1, h2, h3, h4, h5, h6 {
 
 p { letter-spacing: -0.022em; }
 
-/* Pill buttons + dark translucent nav helpers — main site parity */
+/* =========================================================
+   Main-site visual classes — ported verbatim from
+   acquihiretech.com/css/styles.css so this app inherits the
+   exact same typography, hero, buttons, tiles, and containers.
+   ========================================================= */
+
+/* ── Container ── */
+.container {
+  max-width: 980px;
+  margin: 0 auto;
+  padding: 0 22px;
+}
+.container-wide {
+  max-width: 1440px;
+  margin: 0 auto;
+  padding: 0 22px;
+}
+
+/* ── Typography scale (Apple's "headline-super") ── */
+.display {
+  font-size: 80px;
+  line-height: 1.05;
+  font-weight: 600;
+  letter-spacing: -0.015em;
+}
+@media (max-width: 1068px) { .display { font-size: 64px; line-height: 1.0625; } }
+@media (max-width: 734px)  { .display { font-size: 48px; line-height: 1.08349; letter-spacing: -0.003em; } }
+
+.headline {
+  font-size: 56px;
+  line-height: 1.07143;
+  font-weight: 600;
+  letter-spacing: -0.005em;
+}
+@media (max-width: 1068px) { .headline { font-size: 48px; line-height: 1.08349; } }
+@media (max-width: 734px)  { .headline { font-size: 40px; line-height: 1.1; letter-spacing: 0; } }
+
+.subhead {
+  font-size: 40px;
+  line-height: 1.1;
+  font-weight: 600;
+  letter-spacing: 0;
+}
+@media (max-width: 1068px) { .subhead { font-size: 32px; line-height: 1.125; } }
+@media (max-width: 734px)  { .subhead { font-size: 28px; line-height: 1.14286; } }
+
+.lead {
+  font-size: 21px;
+  line-height: 1.381;
+  font-weight: 400;
+  letter-spacing: 0.011em;
+  color: var(--text);
+  max-width: 58ch;
+}
+@media (max-width: 734px) { .lead { font-size: 19px; line-height: 1.4211; } }
+
+.eyebrow {
+  display: block;
+  font-size: 21px;
+  line-height: 1.19048;
+  font-weight: 600;
+  letter-spacing: 0.011em;
+  color: var(--text-secondary);
+  margin: 0 0 6px;
+}
+@media (max-width: 734px) { .eyebrow { font-size: 19px; } }
+
+/* ── Buttons ── */
+.btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 6px;
+  font-size: 17px;
+  line-height: 1.17648;
+  font-weight: 400;
+  letter-spacing: -0.022em;
+  padding: 12px 22px;
+  border-radius: var(--r-pill);
+  min-width: 28px;
+  white-space: nowrap;
+  transition: background 0.2s, color 0.2s, border-color 0.2s;
+  cursor: pointer;
+  border: 1px solid transparent;
+}
+.btn-primary { background: var(--text); color: #fff; }
+.btn-primary:hover { background: #000; }
+.btn-secondary {
+  background: transparent;
+  color: var(--text);
+  border-color: var(--text);
+}
+.btn-secondary:hover { background: var(--text); color: #fff; }
+.btn-dark-outline {
+  background: transparent;
+  color: var(--text);
+  border-color: var(--text);
+}
+.btn-dark-outline:hover { background: var(--text); color: #fff; }
+.btn-light-outline {
+  background: transparent;
+  color: #fff;
+  border-color: #fff;
+}
+.btn-light-outline:hover { background: #fff; color: var(--text); }
+.btn-white {
+  background: #fff;
+  color: var(--text);
+  border-color: #fff;
+}
+.btn-white:hover { background: rgba(255,255,255,0.88); }
+.btn-large { padding: 13px 28px; font-size: 17px; }
+
+/* ── Section head ── */
+.section-head {
+  text-align: center;
+  max-width: 720px;
+  margin: 0 auto 56px;
+}
+.section-head .eyebrow { color: var(--text-secondary); margin-bottom: 8px; }
+.section-head .headline { margin-bottom: 16px; }
+.section-head .lead { margin: 0 auto; }
+
+/* ── Dark hero (matches .hero-3d) ── */
+.hero-3d {
+  position: relative;
+  background: #0f0e10;
+  padding: 96px 0 60px;
+  text-align: center;
+  overflow: hidden;
+}
+.hero-3d .container {
+  position: relative;
+  z-index: 1;
+}
+.hero-3d .eyebrow {
+  color: rgba(255,255,255,0.52);
+  letter-spacing: 0.01em;
+  margin-bottom: 10px;
+}
+.hero-3d .display {
+  color: #f5f5f7;
+  max-width: 20ch;
+  margin: 0 auto 16px;
+}
+.hero-3d .lead {
+  color: rgba(245,245,247,0.72);
+  margin: 0 auto 28px;
+  max-width: 620px;
+  line-height: 1.7;
+}
+.hero-3d .hero-actions {
+  display: inline-flex;
+  gap: 16px;
+  align-items: center;
+  flex-wrap: wrap;
+  justify-content: center;
+  margin-top: 0;
+}
+.hero-3d .hero-note {
+  margin-top: 22px;
+  font-size: 13px;
+  color: rgba(255,255,255,0.4);
+  letter-spacing: -0.01em;
+}
+.hero-3d::after {
+  content: '';
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  height: 80px;
+  background: linear-gradient(to bottom, transparent, #0f0e10);
+  pointer-events: none;
+  z-index: 0;
+}
+
+/* ── Proof bar (logos under hero) ── */
+.proof-bar {
+  background: #0f0e10;
+  padding: 32px 0 48px;
+  text-align: center;
+}
+.proof-bar-label {
+  font-size: 13px;
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+  color: rgba(245,245,247,0.4);
+  margin-bottom: 18px;
+  font-weight: 500;
+}
+
+/* ── Tile (bento card) ── */
+.tile {
+  position: relative;
+  overflow: hidden;
+  border-radius: var(--r-tile);
+  min-height: 360px;
+  padding: 44px 32px 0;
+  text-align: center;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  background: var(--bg-near-white);
+}
+.tile-light { background: var(--bg-near-white); color: var(--text); }
+.tile-tint  { background: var(--bg-tint); color: var(--text); }
+.tile-dark  { background: var(--bg-dark); color: var(--text-on-dark); }
+.tile-dark p { color: var(--text-on-dark-muted); }
+.tile-eyebrow {
+  display: block;
+  font-size: 17px;
+  font-weight: 600;
+  letter-spacing: 0.011em;
+  color: var(--text-secondary);
+  margin: 0 0 6px;
+}
+.tile-dark .tile-eyebrow { color: var(--text-on-dark-muted); }
+.tile h3 { font-size: 28px; line-height: 1.14; font-weight: 600; margin: 0 0 12px; color: inherit; }
+.tile-sub {
+  font-size: 17px;
+  line-height: 1.47;
+  font-weight: 400;
+  max-width: 46ch;
+  margin: 0 auto 18px;
+  color: inherit;
+}
+
+/* ── URL form embedded in dark hero ── */
+.hero-url-form {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  padding: 6px;
+  background: rgba(255,255,255,0.08);
+  border: 1px solid rgba(255,255,255,0.16);
+  border-radius: 999px;
+  max-width: 560px;
+  width: 100%;
+  margin: 0 auto;
+}
+.hero-url-form input {
+  flex: 1;
+  background: transparent;
+  border: 0;
+  outline: 0;
+  padding: 12px 18px;
+  font-size: 17px;
+  color: #f5f5f7;
+  font-family: inherit;
+  letter-spacing: -0.022em;
+  min-width: 0;
+}
+.hero-url-form input::placeholder {
+  color: rgba(245,245,247,0.4);
+}
+.hero-url-form .btn { padding: 12px 24px; }
+@media (max-width: 480px) {
+  .hero-url-form { flex-direction: column; padding: 12px; border-radius: 18px; }
+  .hero-url-form input { width: 100%; text-align: center; }
+  .hero-url-form .btn { width: 100%; }
+}
+
+/* ── Dark site-header nav (translucent) ── */
 .site-header {
   position: sticky;
   top: 0;

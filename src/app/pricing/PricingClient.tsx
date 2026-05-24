@@ -136,12 +136,11 @@ export function PricingClient({ isSignedIn }: PricingClientProps) {
     <div className="min-h-screen bg-white">
       <SiteNav variant={isSignedIn ? "app" : "marketing"} />
 
-      <main className="max-w-[1100px] mx-auto px-6 py-16">
-        <div className="text-center mb-12">
-          <h1 className="font-display text-4xl md:text-5xl font-semibold tracking-[-0.015em] text-text mb-4">
-            Simple, transparent pricing
-          </h1>
-          <p className="text-lg text-text-secondary max-w-lg mx-auto">
+      <main className="container-wide" style={{ padding: "80px 22px" }}>
+        <div className="section-head">
+          <span className="eyebrow">Plans</span>
+          <h1 className="headline">Simple, transparent pricing</h1>
+          <p className="lead">
             Pay via UPI or cryptocurrency. Cancel anytime.
           </p>
         </div>
@@ -178,11 +177,9 @@ export function PricingClient({ isSignedIn }: PricingClientProps) {
               <button
                 onClick={() => startUpgrade(plan.id)}
                 disabled={loading !== null}
-                className={`block w-full text-center py-3 rounded-[980px] font-medium text-sm transition-all disabled:opacity-50 ${
-                  plan.highlighted
-                    ? "bg-engine-conversion text-white hover:opacity-90"
-                    : "bg-bg-dark text-white hover:bg-black"
-                }`}
+                className={`btn btn-large w-full ${
+                  plan.highlighted ? "btn-primary" : "btn-dark-outline"
+                } disabled:opacity-50`}
               >
                 {plan.cta}
               </button>
@@ -206,15 +203,17 @@ export function PricingClient({ isSignedIn }: PricingClientProps) {
         </div>
 
         {/* Agency Tier */}
-        <div className="p-8 rounded-[18px] bg-bg-dark text-white text-center">
-          <h2 className="font-display text-2xl font-semibold mb-2">Agency Plan — ₹14,999/mo</h2>
-          <p className="text-text-on-dark-muted mb-6 max-w-lg mx-auto">
+        <div className="tile tile-dark" style={{ minHeight: 0, padding: "48px 32px", marginTop: 24 }}>
+          <span className="tile-eyebrow">Enterprise</span>
+          <h3>Agency Plan — ₹14,999/mo</h3>
+          <p className="tile-sub">
             Multi-client management, unlimited audits, white-label reports, custom branding,
             and a dedicated account manager.
           </p>
           <a
             href="https://acquihiretech.com/contact.html"
-            className="inline-flex px-6 py-3 bg-white text-bg-dark rounded-[980px] font-medium text-sm hover:bg-bg-tint"
+            className="btn btn-white btn-large"
+            style={{ marginBottom: 44 }}
           >
             Contact Sales
           </a>
