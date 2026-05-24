@@ -50,8 +50,9 @@ export async function sendEmail(opts: {
     lastResendError = null;
     return { ok: true, id: result.data?.id };
   } catch (err: any) {
-    lastResendError = err.message || String(err);
+    const msg = err?.message || String(err);
+    lastResendError = msg;
     console.error("[email] send threw:", err);
-    return { ok: false, error: lastResendError };
+    return { ok: false, error: msg };
   }
 }
