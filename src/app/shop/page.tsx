@@ -1,7 +1,7 @@
 import type { Metadata } from "next";
 import { SiteNav } from "@/components/SiteNav";
 import { SiteFooter } from "@/components/SiteFooter";
-import { PRODUCTS, formatProductPrice } from "@/lib/products";
+import { VISIBLE_PRODUCTS as PRODUCTS, formatProductPrice } from "@/lib/products";
 
 export const metadata: Metadata = {
   title: "Shop — AcquihireTech",

@@ -24,6 +24,7 @@ export interface Product {
   fileSize: string;              // human-readable: "50 KB" / "2.4 MB"
   badge?: string;                // optional ribbon: "Bestseller" / "New" / "Limited"
   heroAccent?: "growth" | "conversion" | "operations" | "presence"; // brand color
+  published?: boolean;           // default true. Set false to hide from /shop catalog.
 }
 
 export const PRODUCTS: Product[] = [
@@ -100,9 +101,9 @@ export const PRODUCTS: Product[] = [
       "Setup guide (video + written)",
     ],
     fileUrl:
-      "https://acquihiretech.com/shop-files/freelancer-life-os/freelancer-life-os.zip",
-    fileFormat: "Notion link + .zip backup",
-    fileSize: "~3 MB",
+      "https://acquihiretech.com/shop-files/freelancer-life-os/freelancer-life-os.txt",
+    fileFormat: ".txt (setup guide + schema)",
+    fileSize: "~30 KB",
     heroAccent: "conversion",
   },
 
@@ -133,9 +134,9 @@ export const PRODUCTS: Product[] = [
       "Resource & tool stack guide",
     ],
     fileUrl:
-      "https://acquihiretech.com/shop-files/ai-productivity-mastery/ai-productivity-mastery.zip",
-    fileFormat: ".pdf + .epub + .zip",
-    fileSize: "~12 MB",
+      "https://acquihiretech.com/shop-files/ai-productivity-mastery/ai-productivity-mastery.txt",
+    fileFormat: ".txt (full ebook + 30-day workbook)",
+    fileSize: "~80 KB",
     heroAccent: "operations",
   },
 
@@ -175,6 +176,7 @@ export const PRODUCTS: Product[] = [
     fileSize: "~25 MB",
     badge: "New",
     heroAccent: "presence",
+    published: false, // hidden until visual planner is created
   },
 
   // ─────────────────────────────────────────────────────────────────────────
@@ -209,8 +211,14 @@ export const PRODUCTS: Product[] = [
     fileFormat: ".zip (PDFs + PNGs + SVGs + PSDs)",
     fileSize: "~180 MB",
     heroAccent: "growth",
+    published: false, // hidden until visual designs are produced
   },
 ];
+
+/** Catalog excludes products marked published: false */
+export const VISIBLE_PRODUCTS: Product[] = PRODUCTS.filter(
+  (p) => p.published !== false
+);
 
 export function getProductBySlug(slug: string): Product | undefined {
   return PRODUCTS.find((p) => p.slug === slug);
