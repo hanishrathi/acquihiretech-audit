@@ -101,9 +101,9 @@ export const PRODUCTS: Product[] = [
       "Setup guide (video + written)",
     ],
     fileUrl:
-      "https://acquihiretech.com/shop-files/freelancer-life-os/freelancer-life-os.txt",
-    fileFormat: ".txt (setup guide + schema)",
-    fileSize: "~30 KB",
+      "https://acquihiretech.com/shop-files/freelancer-life-os/freelancer-life-os.pdf",
+    fileFormat: ".pdf (designed 38-page blueprint)",
+    fileSize: "~107 KB",
     heroAccent: "conversion",
   },
 
@@ -134,9 +134,9 @@ export const PRODUCTS: Product[] = [
       "Resource & tool stack guide",
     ],
     fileUrl:
-      "https://acquihiretech.com/shop-files/ai-productivity-mastery/ai-productivity-mastery.txt",
-    fileFormat: ".txt (full ebook + 30-day workbook)",
-    fileSize: "~80 KB",
+      "https://acquihiretech.com/shop-files/ai-productivity-mastery/ai-productivity-mastery.pdf",
+    fileFormat: ".pdf (designed 47-page book + workbook)",
+    fileSize: "~130 KB",
     heroAccent: "operations",
   },
 
