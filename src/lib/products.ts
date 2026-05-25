@@ -63,9 +63,9 @@ export const PRODUCTS: Product[] = [
       "Bonus: prompt-chaining workflows",
     ],
     fileUrl:
-      "https://acquihiretech.com/shop-files/150-ai-prompts/150-ai-prompts.txt",
-    fileFormat: ".txt + .pdf",
-    fileSize: "~120 KB",
+      "https://acquihiretech.com/shop-files/150-ai-prompts/150-ai-prompts.pdf",
+    fileFormat: ".pdf (59-page designed book)",
+    fileSize: "~156 KB",
     badge: "Bestseller",
     heroAccent: "growth",
   },
