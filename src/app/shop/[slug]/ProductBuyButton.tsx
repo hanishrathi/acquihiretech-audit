@@ -1,7 +1,7 @@
 "use client";
 
-import { useState } from "react";
-import { useRouter } from "next/navigation";
+import { useState, useEffect } from "react";
+import { useRouter, useSearchParams } from "next/navigation";
 
 interface Props {
   slug: string;
@@ -16,11 +16,29 @@ export function ProductBuyButton({ slug, isSignedIn }: Props) {
   const [loading, setLoading] = useState<string | null>(null);
   const [error, setError] = useState<string | null>(null);
   const router = useRouter();
+  const searchParams = useSearchParams();
+
+  // Auto-open buy modal when arriving from the main-site cPanel page via ?buy=1
+  // (or send to sign-up if not authed yet)
+  useEffect(() => {
+    if (searchParams.get("buy") === "1") {
+      if (!isSignedIn) {
+        router.push(
+          `/sign-up?redirect_url=${encodeURIComponent(`/shop/${slug}?buy=1`)}`
+        );
+      } else {
+        setOpen(true);
+      }
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
 
   function start() {
     setError(null);
     if (!isSignedIn) {
-      router.push(`/sign-up?redirect_url=/shop/${slug}`);
+      router.push(
+        `/sign-up?redirect_url=${encodeURIComponent(`/shop/${slug}?buy=1`)}`
+      );
       return;
     }
     setOpen(true);
