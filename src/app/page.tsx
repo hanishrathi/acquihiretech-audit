@@ -4,6 +4,7 @@ import { useState } from "react";
 import { useRouter } from "next/navigation";
 import { SiteNav } from "@/components/SiteNav";
 import { SiteFooter } from "@/components/SiteFooter";
+import { trackConversion } from "@/lib/track";
 
 export default function HomePage() {
   const [url, setUrl] = useState("");
@@ -52,6 +53,12 @@ export default function HomePage() {
         setStep("email");
         return;
       }
+      // A free audit given an email address is the tool's lead. No URL or
+      // email in the params — see src/lib/track.ts.
+      trackConversion(
+        { name: "generate_lead", params: { lead_source: "quick_audit" } },
+        { name: "Lead", params: { content_name: "Website audit" } }
+      );
       router.push(`/report/${data.auditId}`);
     } catch {
       setError("Network error. Please check your connection and try again.");

@@ -12,6 +12,9 @@
  */
 export const GA_MEASUREMENT_ID = "G-XGCN7KZKVK";
 
+/** The marketing site's Meta Pixel (same ID as its js/analytics.js). */
+export const META_PIXEL_ID = "1659929699486976";
+
 /** Pages that are never reported: staff-only. */
 const UNTRACKED = [/^\/admin(\/|$)/];
 
@@ -37,4 +40,18 @@ export function analyticsPath(pathname: string): string | null {
     if (re.test(pathname)) return pathname.replace(re, replacement);
   }
   return pathname;
+}
+
+/**
+ * The Meta Pixel always reports the full URL and offers no way to rewrite it,
+ * so instead of cleaning the URL we only let it fire where the URL is clean:
+ * the public, ID-free marketing pages, with nothing in the query string but
+ * campaign parameters (and ?buy=1, which the marketing site's shop links add).
+ */
+const META_PAGES = [/^\/$/, /^\/pricing$/, /^\/shop$/, /^\/shop\/[a-z0-9-]+$/];
+const SAFE_PARAM = /^(utm_[a-z]+|fbclid|gclid|buy)$/;
+
+export function metaPixelAllowed(pathname: string, search: string): boolean {
+  if (!META_PAGES.some((re) => re.test(pathname))) return false;
+  return Array.from(new URLSearchParams(search).keys()).every((k) => SAFE_PARAM.test(k));
 }

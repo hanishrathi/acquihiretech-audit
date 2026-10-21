@@ -2,16 +2,18 @@
 
 import { useState, useEffect } from "react";
 import { useRouter, useSearchParams } from "next/navigation";
+import { trackConversion } from "@/lib/track";
 
 interface Props {
   slug: string;
   title: string;
+  pricePaise: number;
   isSignedIn: boolean;
 }
 
 type PayMethod = "upi" | "crypto";
 
-export function ProductBuyButton({ slug, isSignedIn }: Props) {
+export function ProductBuyButton({ slug, title, pricePaise, isSignedIn }: Props) {
   const [open, setOpen] = useState(false);
   const [loading, setLoading] = useState<string | null>(null);
   const [error, setError] = useState<string | null>(null);
@@ -47,6 +49,24 @@ export function ProductBuyButton({ slug, isSignedIn }: Props) {
   async function pick(method: PayMethod, chain?: string) {
     setLoading(`${method}-${chain || ""}`);
     setError(null);
+    // Sent before the request rather than before the redirect below, so the
+    // hit has the round trip to leave the page instead of racing the unload.
+    const value = pricePaise / 100;
+    trackConversion(
+      {
+        name: "begin_checkout",
+        params: {
+          currency: "INR",
+          value,
+          payment_type: method,
+          items: [{ item_id: slug, item_name: title, price: value, quantity: 1 }],
+        },
+      },
+      {
+        name: "InitiateCheckout",
+        params: { currency: "INR", value, content_ids: [slug], content_type: "product", num_items: 1 },
+      }
+    );
     try {
       const endpoint =
         method === "upi" ? "/api/checkout/upi" : "/api/checkout/crypto";

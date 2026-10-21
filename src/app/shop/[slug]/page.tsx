@@ -228,6 +228,7 @@ export default async function ProductPage({
             <ProductBuyButton
               slug={product.slug}
               title={product.title}
+              pricePaise={product.priceINR}
               isSignedIn={isSignedIn}
             />
 

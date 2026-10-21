@@ -2,6 +2,7 @@ import type { Metadata } from "next";
 import { Syne, DM_Sans, JetBrains_Mono } from "next/font/google";
 import { ClerkProvider } from "@clerk/nextjs";
 import { GoogleAnalytics } from "@/components/GoogleAnalytics";
+import { MetaPixel } from "@/components/MetaPixel";
 import "./globals.css";
 
 const syne = Syne({
@@ -62,6 +63,9 @@ export const metadata: Metadata = {
     index: true,
     follow: true,
   },
+  // Origin only, even within this site: a full-page load from /report/<id> or
+  // /checkout/... must not hand that URL to the next page's tags as referrer.
+  referrer: "strict-origin",
 };
 
 // Clerk is wrapped only when configured — otherwise the free audit tool
@@ -83,8 +87,9 @@ export default function RootLayout({
       </head>
       <body className="min-h-full flex flex-col bg-background text-foreground">
         {children}
-        {/* GA4, production deployments only — see src/lib/analytics.ts */}
+        {/* GA4 and Meta Pixel, production deployments only — see src/lib/analytics.ts */}
         <GoogleAnalytics enabled={process.env.VERCEL_ENV === "production"} />
+        <MetaPixel enabled={process.env.VERCEL_ENV === "production"} />
       </body>
     </html>
   );
