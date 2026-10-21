@@ -5,6 +5,7 @@ import { PricingClient } from "./PricingClient";
 export const metadata: Metadata = {
   title: "Pricing — AcquiHire Audit",
   description: "Free, Starter, and Pro plans for website auditing. Starting at ₹1,499/mo.",
+  alternates: { canonical: "/pricing" },
 };
 
 export default async function PricingPage() {

@@ -8,6 +8,12 @@ import {
   type CryptoChain,
 } from "@/lib/payments/crypto";
 import { CryptoSubmitForm } from "./CryptoSubmitForm";
+import type { Metadata } from "next";
+
+// Private: signed-in or one-off pages. Kept out of search and AI-answer indexes.
+export const metadata: Metadata = {
+  robots: { index: false, follow: false },
+};
 
 export const dynamic = "force-dynamic";
 

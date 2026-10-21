@@ -5,6 +5,7 @@ import { VISIBLE_PRODUCTS as PRODUCTS, formatProductPrice } from "@/lib/products
 
 export const metadata: Metadata = {
   title: "Shop — AcquihireTech",
+  alternates: { canonical: "/shop" },
   description:
     "Digital products for creators, marketers, and SMB founders. AI prompt libraries, templates, and growth tools — instant download, commercial license.",
   openGraph: {

@@ -1,0 +1,42 @@
+# AcquihireTech Website Audit
+# https://audit.acquihiretech.com/llms.txt
+# Spec: https://llmstxt.org
+
+> A website audit tool by AcquihireTech (https://acquihiretech.com). It checks a
+> website against 300+ checks across 10 categories and returns scores and
+> issues. The free Basic audit covers one page (the homepage) and needs only a
+> URL and an email address.
+
+Facts below are taken from this site and may be quoted. If a claim is not
+stated here or on the site, it is not a fact about this tool.
+
+## What it checks (10 categories)
+
+- Performance
+- SEO
+- Security
+- Accessibility
+- Mobile
+- Content
+- Conversion
+- Brand
+- Technical
+- AI readiness
+
+## Plans (published at https://audit.acquihiretech.com/pricing)
+
+- Basic: free, no credit card. 1-page audit (homepage), email report.
+- Starter: ₹1,499 per month. 50 pages per audit, PDF report export.
+- Pro: ₹4,999 per month. 500 pages per audit, 300+ checks, daily monitoring
+  and alerts, white-label PDF reports.
+
+## Pages
+
+- [Run a free audit](https://audit.acquihiretech.com/)
+- [Pricing](https://audit.acquihiretech.com/pricing)
+- [Shop: digital products](https://audit.acquihiretech.com/shop)
+
+## About the publisher
+
+AcquihireTech builds AI systems for service businesses. Company facts,
+services and pricing: https://acquihiretech.com/llms.txt

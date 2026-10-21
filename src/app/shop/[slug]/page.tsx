@@ -26,6 +26,7 @@ export async function generateMetadata({
   if (!product) return { title: "Product not found" };
   return {
     title: `${product.title} — AcquihireTech Shop`,
+    alternates: { canonical: `/shop/${product.slug}` },
     description: product.shortDescription,
     openGraph: {
       title: `${product.title} — ${formatProductPrice(product.priceINR)}`,
