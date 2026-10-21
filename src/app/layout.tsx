@@ -1,6 +1,8 @@
 import type { Metadata } from "next";
 import { Syne, DM_Sans, JetBrains_Mono } from "next/font/google";
 import { ClerkProvider } from "@clerk/nextjs";
+import { GoogleAnalytics } from "@/components/GoogleAnalytics";
+import { MetaPixel } from "@/components/MetaPixel";
 import "./globals.css";
 
 const syne = Syne({
@@ -22,6 +24,11 @@ const jetbrainsMono = JetBrains_Mono({
 });
 
 export const metadata: Metadata = {
+  // Relative URLs in metadata resolve against this. Each indexable page sets
+  // its own alternates.canonical; there is deliberately no canonical here,
+  // because a page without one would inherit it (every page used to point its
+  // canonical at the home page, telling Google the others were duplicates).
+  metadataBase: new URL("https://audit.acquihiretech.com"),
   title: "Website Audit Tool — AcquiHireTech",
   description:
     "Free AI-powered website audit. Get your performance, SEO, security, and AI readiness scores in 60 seconds. 300+ checks across 10 categories.",
@@ -61,6 +68,40 @@ export const metadata: Metadata = {
     index: true,
     follow: true,
   },
+  // Origin only, even within this site: a full-page load from /report/<id> or
+  // /checkout/... must not hand that URL to the next page's tags as referrer.
+  referrer: "strict-origin",
+};
+
+// Structured data for search and answer engines. The tool is tied to the
+// AcquihireTech organisation by the same @id the marketing site uses, so it
+// reads as part of that entity rather than a separate one.
+const JSON_LD = {
+  "@context": "https://schema.org",
+  "@graph": [
+    {
+      "@type": "WebApplication",
+      "@id": "https://audit.acquihiretech.com/#app",
+      name: "AcquihireTech Website Audit",
+      url: "https://audit.acquihiretech.com/",
+      description:
+        "Website audit tool with 300+ checks across 10 categories: performance, SEO, security, accessibility, mobile, content, conversion, brand, technical and AI readiness.",
+      applicationCategory: "BusinessApplication",
+      operatingSystem: "Web",
+      offers: [
+        { "@type": "Offer", name: "Basic", price: "0", priceCurrency: "INR" },
+        { "@type": "Offer", name: "Starter", price: "1499", priceCurrency: "INR" },
+        { "@type": "Offer", name: "Pro", price: "4999", priceCurrency: "INR" },
+      ],
+      publisher: { "@id": "https://acquihiretech.com/#organization" },
+    },
+    {
+      "@type": "Organization",
+      "@id": "https://acquihiretech.com/#organization",
+      name: "AcquihireTech",
+      url: "https://acquihiretech.com/",
+    },
+  ],
 };
 
 // Clerk is wrapped only when configured — otherwise the free audit tool
@@ -77,11 +118,15 @@ export default function RootLayout({
       lang="en"
       className={`${syne.variable} ${dmSans.variable} ${jetbrainsMono.variable} h-full antialiased`}
     >
-      <head>
-        <link rel="canonical" href="https://audit.acquihiretech.com" />
-      </head>
       <body className="min-h-full flex flex-col bg-background text-foreground">
+        <script
+          type="application/ld+json"
+          dangerouslySetInnerHTML={{ __html: JSON.stringify(JSON_LD).replace(/</g, "\\u003c") }}
+        />
         {children}
+        {/* GA4 and Meta Pixel, production deployments only — see src/lib/analytics.ts */}
+        <GoogleAnalytics enabled={process.env.VERCEL_ENV === "production"} />
+        <MetaPixel enabled={process.env.VERCEL_ENV === "production"} />
       </body>
     </html>
   );

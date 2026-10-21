@@ -29,6 +29,9 @@ export async function generateMetadata({ params }: PageProps): Promise<Metadata>
     return {
       title: "Website Audit Report — AcquiHireTech",
       description: "Free AI-powered website audit. 300+ checks across 10 categories.",
+      // Also while the audit is still running or the lookup failed — without
+      // this, a report fetched before it finished inherited index from the layout.
+      robots: { index: false, follow: true },
     };
   }
 
