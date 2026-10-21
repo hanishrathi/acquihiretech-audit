@@ -1,6 +1,7 @@
 import type { Metadata } from "next";
 import { Syne, DM_Sans, JetBrains_Mono } from "next/font/google";
 import { ClerkProvider } from "@clerk/nextjs";
+import { GoogleAnalytics } from "@/components/GoogleAnalytics";
 import "./globals.css";
 
 const syne = Syne({
@@ -82,6 +83,8 @@ export default function RootLayout({
       </head>
       <body className="min-h-full flex flex-col bg-background text-foreground">
         {children}
+        {/* GA4, production deployments only — see src/lib/analytics.ts */}
+        <GoogleAnalytics enabled={process.env.VERCEL_ENV === "production"} />
       </body>
     </html>
   );
